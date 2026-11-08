@@ -376,6 +376,7 @@ h1, h2, p { margin: 0; }
   bottom: 0;
   width: var(--corner);
   height: var(--corner);
+  overflow: hidden;
   color: var(--ink);
   text-decoration: none;
   box-shadow: 0 0 12px var(--fold);
