@@ -6,9 +6,18 @@
   <title>Brain Snacks</title>
   <meta name="description" content="Short, cosy puzzles with hints and answers whenever you want them.">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='18' r='13' fill='%235B5FC7'/%3E%3Cpath d='M16 2l3 5 5-1-2 5H10L8 6l5 1z' fill='%232A2860'/%3E%3Ccircle cx='11.5' cy='18' r='2' fill='%23fff'/%3E%3Ccircle cx='20.5' cy='18' r='2' fill='%23fff'/%3E%3C/svg%3E">
+  <script>
+    // Set the theme before anything is drawn, so dark mode never flashes light.
+    (function () {
+      var saved = null;
+      try { saved = JSON.parse(localStorage.getItem('bs.theme')); } catch (e) {}
+      var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      document.documentElement.dataset.theme = saved === 'dark' || saved === 'light' ? saved : prefersDark ? 'dark' : 'light';
+    })();
+  </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Bagel+Fat+One&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Bagel+Fat+One&family=Gaegu:wght@700&display=swap">
   <link rel="stylesheet" href="css/styles.css">
   <link rel="stylesheet" href="css/games.css">
 </head>

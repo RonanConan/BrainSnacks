@@ -186,13 +186,14 @@ function mount(el, ctx, saved) {
       class: classes.join(' '),
       type: 'button',
       tabindex: '-1',
+      style: `--d: ${r + c}`,
       onClick: () => select(i),
     });
     cellEls.push(cell);
     gridEl.append(cell);
   }
 
-  const noteBtn = h('button', { class: 'btn', type: 'button', onClick: toggleNotes }, 'Pencil notes (P)');
+  const noteBtn = h('button', { class: 'tab tab-tool', type: 'button', onClick: toggleNotes }, 'Pencil notes (P)');
   const pad = h('div', { class: `pad pad-${size}`, role: 'group', 'aria-label': 'Number pad' },
     Array.from({ length: size }, (_, i) =>
       h('button', { class: 'pad-key', type: 'button', onClick: () => enter(i + 1) }, String(i + 1)),
@@ -272,6 +273,8 @@ function mount(el, ctx, saved) {
     if (value) {
       const bit = 1 << value;
       peers[index].forEach((peer) => { state.notes[peer] &= ~bit; });
+      cellEls[index].classList.add('pop');
+      cellEls[index].addEventListener('animationend', () => cellEls[index].classList.remove('pop'), { once: true });
     }
     if (hintCell === index) hintCell = null;
     if (flaggedWrong === index) flaggedWrong = null;

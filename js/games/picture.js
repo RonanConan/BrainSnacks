@@ -142,13 +142,13 @@ function mount(el, ctx, saved) {
       const classes = ['ng-cell'];
       if (c === 4 && size === 8) classes.push('ng-mid-left');
       if (r === 4 && size === 8) classes.push('ng-mid-top');
-      const cell = h('button', { class: classes.join(' '), type: 'button', tabindex: '-1', 'data-index': index });
+      const cell = h('button', { class: classes.join(' '), type: 'button', tabindex: '-1', 'data-index': index, style: `--d: ${r + c}` });
       cellEls.push(cell);
       board.append(cell);
     }
   }
 
-  const crossBtn = h('button', { class: 'btn', type: 'button', onClick: toggleCross }, 'Cross out squares (X)');
+  const crossBtn = h('button', { class: 'tab tab-tool', type: 'button', onClick: toggleCross }, 'Cross out squares (X)');
   ctx.tools.append(crossBtn);
   el.append(h('div', { class: 'ng-wrap' }, board));
 

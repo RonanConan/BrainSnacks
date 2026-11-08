@@ -1,18 +1,20 @@
-// The frame every game sits in: level picker, Berry's speech bubble, Hint, Answer, New.
+// The open book every game sits in: level picker, Berry's pencil notes, Hint, Answer, New.
 import { h } from './core/dom.js';
 import { load, save, remove } from './core/storage.js';
 import { recordFinish } from './core/stats.js';
+import { themeToggle } from './core/theme.js';
 import { berrySvg } from './mascot.js';
 
 const CHEERS = ['You got it!', 'Lovely work.', 'Solved!', 'That was all you.', 'Nicely done.'];
-const CRUMB_COLOURS = ['#F4A6B8', '#FCE08A', '#B9DCF2', '#BDE6D3', '#D6C8F4'];
+const CRUMB_COLOURS = ['#F6C3DA', '#FDE3A0', '#BFD9F6', '#BCE6DA', '#CDB8F6', '#7E74E8'];
+const MAX_NOTES = 3;
 
 function dropCrumbs(host) {
   if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  for (let i = 0; i < 18; i++) {
+  for (let i = 0; i < 26; i++) {
     const crumb = h('span', { class: 'crumb' });
-    crumb.style.setProperty('--x', `${Math.round(Math.random() * 240 - 120)}px`);
-    crumb.style.setProperty('--y', `${Math.round(Math.random() * 90 + 60)}px`);
+    crumb.style.setProperty('--x', `${Math.round(Math.random() * 300 - 150)}px`);
+    crumb.style.setProperty('--y', `${Math.round(Math.random() * 200 - 80)}px`);
     crumb.style.setProperty('--turn', `${Math.round(Math.random() * 360)}deg`);
     crumb.style.background = CRUMB_COLOURS[i % CRUMB_COLOURS.length];
     crumb.addEventListener('animationend', () => crumb.remove());
@@ -38,19 +40,19 @@ export function openGame(game, root) {
   let returnFocus = null;
 
   const stage = h('section', { class: 'stage', 'aria-label': game.title });
-  const bubble = h('p', { class: 'bubble', 'aria-live': 'polite' });
+  const notes = h('ul', { class: 'pencil-notes', 'aria-live': 'polite' });
   const berryHost = h('div', { class: 'berry-host', html: berrySvg });
   const berry = berryHost.firstElementChild;
   const tools = h('div', { class: 'tools' });
   const hintLabel = game.typing ? 'Give me a hint' : 'Give me a hint (H)';
   const newLabel = game.newLabel || 'New puzzle';
 
-  const hintBtn = h('button', { class: 'btn btn-main', type: 'button', onClick: doHint }, hintLabel);
-  const answerBtn = h('button', { class: 'btn', type: 'button', onClick: askAnswer }, 'Show the answer');
-  const newBtn = h('button', { class: 'btn', type: 'button', onClick: askNew }, newLabel);
+  const hintBtn = h('button', { class: 'tab tab-main', type: 'button', onClick: doHint }, hintLabel);
+  const answerBtn = h('button', { class: 'tab tab-answer', type: 'button', onClick: askAnswer }, 'Show the answer');
+  const newBtn = h('button', { class: 'tab tab-new', type: 'button', onClick: askNew }, newLabel);
   const buttons = h('div', { class: 'action-buttons' }, hintBtn, answerBtn, newBtn);
   const confirmBox = h('div', { class: 'confirm', hidden: true });
-  const actions = h('div', { class: 'actions' }, tools, buttons, confirmBox);
+  const actions = h('div', { class: 'actions' }, buttons, tools, confirmBox);
 
   const levelButtons = levels.map((item) =>
     h('button', {
@@ -63,21 +65,31 @@ export function openGame(game, root) {
 
   root.replaceChildren(
     h('div', { class: 'game-page', 'data-game': game.id },
-      h('header', { class: 'game-head' },
-        h('a', { class: 'back', href: '#/' }, 'All snacks'),
-        h('h1', null, game.title),
-        levels.length > 1 && h('div', { class: 'levels', role: 'group', 'aria-label': game.levelName || 'Level' }, levelButtons),
-      ),
-      h('div', { class: 'game-body' },
+      h('div', { class: 'book' },
+        h('div', { class: 'ribbon', 'aria-hidden': 'true' }),
+        h('header', { class: 'book-head' },
+          h('a', { class: 'back', href: '#/' }, 'Back to the tray'),
+          h('h1', null, game.title),
+        ),
+        h('div', { class: 'book-top' },
+          levels.length > 1 && h('div', { class: 'levels', role: 'group', 'aria-label': game.levelName || 'Level' }, levelButtons),
+          themeToggle(),
+        ),
         stage,
-        h('div', { class: 'sayer' }, berryHost, bubble),
+        h('div', { class: 'sayer' }, berryHost, notes),
         actions,
       ),
     ),
   );
 
   function say(text, mood = 'idle') {
-    bubble.textContent = text;
+    if (notes.lastElementChild?.textContent !== text) {
+      notes.append(h('li', null, text));
+      while (notes.children.length > MAX_NOTES) notes.firstElementChild.remove();
+    }
+    // Clearing the mood first lets the same reaction play twice in a row.
+    berry.dataset.mood = 'idle';
+    berry.getBoundingClientRect();
     berry.dataset.mood = mood;
   }
 
@@ -90,7 +102,7 @@ export function openGame(game, root) {
     hintBtn.disabled = done || !actionsOn;
     answerBtn.disabled = done || !actionsOn;
     newBtn.textContent = done ? game.nextLabel || 'Next puzzle' : newLabel;
-    newBtn.classList.toggle('btn-main', done);
+    newBtn.classList.toggle('tab-main', done);
   }
 
   const context = () => ({
@@ -126,6 +138,7 @@ export function openGame(game, root) {
     closeAsk();
     tools.replaceChildren();
     stage.replaceChildren();
+    notes.replaceChildren();
     say(game.intro, 'idle');
     const holder = h('div', { class: 'game-holder' });
     stage.append(holder);
@@ -149,14 +162,14 @@ export function openGame(game, root) {
     buttons.hidden = true;
     confirmBox.hidden = false;
     const yes = h('button', {
-      class: 'btn btn-main',
+      class: 'tab tab-main',
       type: 'button',
       onClick: () => { closeAsk(); onYes(); },
     }, yesLabel);
     confirmBox.replaceChildren(
       h('p', null, question),
       yes,
-      h('button', { class: 'btn', type: 'button', onClick: cancelAsk }, 'Keep going'),
+      h('button', { class: 'tab tab-new', type: 'button', onClick: cancelAsk }, 'Keep going'),
     );
     yes.focus();
   }

@@ -161,7 +161,7 @@ function mount(el, ctx, saved) {
   const cellEls = solution.map((ch, i) => {
     if (!ch) return h('div', { class: 'cw-block' });
     const number = puzzle.numbers[i];
-    const cell = h('div', { class: 'cw-cell', onMousedown: (event) => { event.preventDefault(); clickCell(i); } },
+    const cell = h('div', { class: 'cw-cell', style: `--d: ${Math.floor(i / cols) + (i % cols)}`, onMousedown: (event) => { event.preventDefault(); clickCell(i); } },
       number ? h('span', { class: 'cw-num' }, String(number)) : null,
       h('span', { class: 'cw-letter' }),
     );

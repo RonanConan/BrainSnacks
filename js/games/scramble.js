@@ -31,7 +31,7 @@ function mount(el, ctx, saved) {
   const entry = allWords.find((item) => item.word === state.word);
   let finished = false;
 
-  const slotEls = state.slots.map((_, i) => h('button', { type: 'button', onClick: () => takeBack(i) }));
+  const slotEls = state.slots.map((_, i) => h('button', { type: 'button', style: `--d: ${i}`, onClick: () => takeBack(i) }));
   const tileEls = state.tiles.map((tile) => h('button', { type: 'button', onClick: () => place(tile) }, tile.letter));
   const slotRow = h('div', { class: 'sc-slots' }, slotEls);
   const tileRow = h('div', { class: 'sc-tiles' }, tileEls);
@@ -79,6 +79,7 @@ function mount(el, ctx, saved) {
     if (guess === state.word || (allowedAnswers.has(guess) && sorted(guess) === sorted(state.word))) {
       finished = true;
       paint();
+      slotRow.classList.add('sc-solved');
       ctx.finish({ message: `Yes, ${guess}!` });
     } else {
       ctx.say("Not quite. Click a letter to take it back, or ask for a hint.", 'think');
