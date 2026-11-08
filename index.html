@@ -13,11 +13,14 @@
       try { saved = JSON.parse(localStorage.getItem('bs.theme')); } catch (e) {}
       var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
       document.documentElement.dataset.theme = saved === 'dark' || saved === 'light' ? saved : prefersDark ? 'dark' : 'light';
+      var font = null;
+      try { font = JSON.parse(localStorage.getItem('bs.font')); } catch (e) {}
+      if (font === 'clear' || font === 'roomy') document.documentElement.dataset.font = font;
     })();
   </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Bagel+Fat+One&family=Gaegu:wght@700&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Bagel+Fat+One&family=Gaegu:wght@700&family=Lexend:wght@400;700&display=swap">
   <link rel="stylesheet" href="css/styles.css">
   <link rel="stylesheet" href="css/games.css">
 </head>

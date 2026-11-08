@@ -7,6 +7,7 @@ import { art } from './art.js';
 import { openGame } from './shell.js';
 import { games } from './games/index.js';
 import { themeToggle, followSystemTheme } from './core/theme.js';
+import { fontPicker } from './core/font.js';
 import { showCover, dismissCover } from './cover.js';
 import { TRAYS, trayForRoute, neighbour, isForward } from './trays.js';
 import { turnPage, finishTurn, isTurning } from './page-turn.js';
@@ -75,22 +76,24 @@ function pageHead({ title, sub, extra }) {
       h('p', { class: 'home-sub' }, sub),
     ),
     h('div', { class: 'home-right' },
-      h('button', {
-        class: 'link-button',
-        type: 'button',
-        onClick: (event) => {
-          const link = event.currentTarget;
-          showCover({
-            root,
-            swingShut: true,
-            onOpen: () => {
-              settleTray();
-              link.focus({ preventScroll: true });
-            },
-          });
-        },
-      }, 'Close the book'),
-      themeToggle(),
+      h('div', { class: 'home-tools' },
+        h('button', {
+          class: 'link-button',
+          type: 'button',
+          onClick: (event) => {
+            const link = event.currentTarget;
+            showCover({
+              root,
+              swingShut: true,
+              onOpen: () => {
+                settleTray();
+                link.focus({ preventScroll: true });
+              },
+            });
+          },
+        }, 'Close the book'),
+        h('div', { class: 'home-switches' }, fontPicker(), themeToggle()),
+      ),
       extra,
     ),
   );

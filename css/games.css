@@ -49,7 +49,7 @@
 .dot-now { box-shadow: 0 0 0 3px var(--typed); }
 .dot-done { background: var(--typed); }
 .maths-body { display: grid; gap: 1rem; justify-items: center; }
-.maths-prompt { font: 400 clamp(2rem, 5vw, 3.1rem)/1.15 var(--display); }
+.maths-prompt { font: var(--puzzle-weight) clamp(2rem, 5vw, 3.1rem)/1.15 var(--puzzle); }
 .maths-label { font-size: 1.05rem; }
 .maths-form { display: flex; gap: 0.5rem; }
 .maths-input {
@@ -65,7 +65,7 @@
 .working { font-size: 1.15rem; }
 
 .gap-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 0.55rem; }
-.gap-number { font: 400 2.6rem/1 var(--display); }
+.gap-number { font: var(--puzzle-weight) 2.6rem/1 var(--puzzle); }
 .gap {
   appearance: none;
   width: 3.2rem;
@@ -79,7 +79,7 @@
 }
 .gap:hover { background: var(--butter); }
 
-.maths-target { font: 400 4.2rem/1 var(--display); color: var(--typed); }
+.maths-target { font: var(--puzzle-weight) 4.2rem/1 var(--puzzle); color: var(--typed); }
 .tiles { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.6rem; }
 .tile {
   appearance: none;
@@ -90,7 +90,7 @@
   border-radius: 18px;
   background: var(--butter);
   color: var(--ink);
-  font: 400 1.75rem/1 var(--display);
+  font: var(--puzzle-weight) 1.75rem/1 var(--puzzle);
   cursor: pointer;
 }
 .tile-on { background: var(--pink); }
@@ -177,7 +177,7 @@
   height: clamp(2.5rem, 7vw, 3.7rem);
   border-radius: 14px;
   color: var(--ink);
-  font: 400 clamp(1.4rem, 4vw, 2.1rem)/1 var(--display);
+  font: var(--puzzle-weight) clamp(1.4rem, 4vw, 2.1rem)/1 var(--puzzle);
   padding: 0;
 }
 .sc-slot { border: 3px dashed var(--thin); background: var(--related); cursor: pointer; }
@@ -205,7 +205,7 @@
 
 /* Riddles */
 .rd { max-width: 620px; margin: 0 auto; display: grid; gap: 1.5rem; padding: 1.75rem 0; }
-.rd-question { font: 400 clamp(1.5rem, 3.4vw, 2.1rem)/1.25 var(--display); }
+.rd-question { font: var(--puzzle-weight) clamp(1.5rem, 3.4vw, 2.1rem)/1.25 var(--puzzle); }
 .rd-form { display: flex; gap: 0.5rem; }
 .rd-input {
   flex: 1;
@@ -219,7 +219,7 @@
 }
 .rd-input:disabled { opacity: 0.55; }
 .rd-answer { background: var(--mint); border-radius: 18px; padding: 1rem 1.2rem; }
-.rd-solution { font: 400 1.65rem/1.15 var(--display); margin-bottom: 0.3rem; }
+.rd-solution { font: var(--puzzle-weight) 1.65rem/1.15 var(--puzzle); margin-bottom: 0.3rem; }
 
 /* Memory match */
 .mem { display: grid; gap: 0.7rem; max-width: 560px; margin: 0 auto; grid-template-columns: repeat(4, 1fr); }

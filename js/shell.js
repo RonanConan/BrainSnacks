@@ -3,6 +3,7 @@ import { h } from './core/dom.js';
 import { load, save, remove } from './core/storage.js';
 import { recordFinish } from './core/stats.js';
 import { themeToggle } from './core/theme.js';
+import { fontPicker } from './core/font.js';
 import { berrySvg } from './mascot.js';
 
 const CHEERS = ['You got it!', 'Lovely work.', 'Solved!', 'That was all you.', 'Nicely done.'];
@@ -80,7 +81,7 @@ export function openGame(game, root) {
             themeToggle(),
           ),
           h('div', { class: 'page-margin' },
-            h('div', { class: 'sayer' }, berryHost, notes),
+            h('div', { class: 'sayer' }, berryHost, notes, fontPicker()),
             actions,
           ),
         ),

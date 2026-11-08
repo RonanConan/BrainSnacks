@@ -28,11 +28,31 @@
   --berry: #5247bd;
   --shine: #8a80e6;
   --crown: #2c2260;
+  --gaegu: 'Gaegu', 'Comic Sans MS', cursive;
+  --atkinson: 'Atkinson Hyperlegible', Verdana, sans-serif;
+  --lexend: 'Lexend', Verdana, sans-serif;
+  /* Titles always use --display. The rest changes with the font picker. */
   --display: 'Bagel Fat One', 'Trebuchet MS', sans-serif;
-  --body: 'Atkinson Hyperlegible', Verdana, sans-serif;
-  --hand: 'Gaegu', 'Comic Sans MS', cursive;
+  --body: var(--atkinson);
+  --hand: var(--gaegu);
+  --hand-weight: 700;
+  --hand-scale: 1;
+  --puzzle: var(--display);
+  --puzzle-weight: 400;
   --spine: 36px;
   --corner: 118px;
+}
+
+:root[data-font] {
+  --hand: var(--body);
+  --hand-weight: 400;
+  --hand-scale: 0.8;
+  --puzzle: var(--body);
+  --puzzle-weight: 700;
+}
+:root[data-font='roomy'] {
+  --body: var(--lexend);
+  --hand-scale: 0.74;
 }
 
 :root[data-theme='dark'] {
@@ -161,6 +181,60 @@ h1, h2, p { margin: 0; }
 [data-theme='dark'] .theme-sun { opacity: 0; transform: rotate(60deg); }
 [data-theme='dark'] .theme-moon { opacity: 1; transform: none; }
 
+/* Font picker */
+.font-picker { flex: none; }
+.font-button {
+  appearance: none;
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  border: 3px solid var(--ink);
+  border-radius: 50%;
+  background: var(--pale);
+  color: var(--ink);
+  font: 400 1.05rem/1 var(--display);
+  cursor: pointer;
+  transition: background-color 0.15s, transform 0.12s;
+}
+.font-button:hover { background: var(--lilac); }
+.font-button:active { transform: translateY(2px); }
+.font-menu { display: none; }
+.font-menu:popover-open {
+  display: grid;
+  gap: 0.3rem;
+  position: fixed;
+  inset: auto;
+  width: min(15rem, calc(100vw - 24px));
+  margin: 0;
+  padding: 0.45rem;
+  border: 3px solid var(--ink);
+  border-radius: 18px;
+  background: var(--paper);
+  color: var(--ink);
+  box-shadow: 0 12px 26px rgb(20 12 60 / 0.3);
+}
+.font-option {
+  appearance: none;
+  display: grid;
+  gap: 0.1rem;
+  min-height: 44px;
+  padding: 0.45rem 0.7rem;
+  border: 0;
+  border-radius: 12px;
+  background: transparent;
+  color: var(--ink);
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+.font-option:hover { background: var(--pale); }
+.font-option[aria-pressed='true'] { background: var(--lilac); }
+.font-option-cosy, .font-option-clear { font-family: var(--atkinson); }
+.font-option-roomy { font-family: var(--lexend); }
+.font-name { font-size: 1.05rem; font-weight: 700; line-height: 1.2; }
+.font-option-cosy .font-name { font: 700 1.35rem/1 var(--gaegu); }
+.font-about { font-size: 0.82rem; line-height: 1.25; }
+
 /* Book details */
 .spine {
   position: fixed;
@@ -220,13 +294,16 @@ h1, h2, p { margin: 0; }
 
 .home-sub {
   margin-top: 0.15rem;
-  font: 700 1.45rem/1.1 var(--hand);
+  font: var(--hand-weight) calc(1.45rem * var(--hand-scale))/1.1 var(--hand);
   color: var(--soft);
   transform: rotate(-1.5deg);
   transform-origin: left;
 }
+:root[data-font] .home-sub { transform: none; }
 
 .home-right { display: flex; align-items: center; gap: 0.9rem; }
+.home-tools { display: grid; justify-items: center; gap: 0.1rem; }
+.home-switches { display: flex; align-items: center; gap: 0.55rem; }
 
 .link-button {
   appearance: none;
@@ -401,7 +478,7 @@ h1, h2, p { margin: 0; }
   inset: 0;
   display: grid;
   place-items: center;
-  font: 700 1.3rem/1 var(--hand);
+  font: 700 calc(1.3rem * var(--hand-scale))/1 var(--hand);
 }
 .corner-next .corner-label { transform: translate(-19%, -19%) rotate(-45deg); }
 .corner-back .corner-label { transform: translate(19%, -19%) rotate(45deg); }
@@ -632,6 +709,7 @@ h1, h2, p { margin: 0; }
   min-width: 0;
   padding: 0.3rem 0.8rem 1rem 2rem;
 }
+.sayer > .font-picker { position: absolute; top: 0.6rem; left: calc(2rem + 108px + 0.6rem); }
 
 .pencil-notes {
   display: grid;
@@ -639,9 +717,10 @@ h1, h2, p { margin: 0; }
   margin: 0.4rem 0 0;
   padding: 0;
   list-style: none;
-  font: 700 1.35rem/1.14 var(--hand);
+  font: var(--hand-weight) calc(1.35rem * var(--hand-scale))/1.14 var(--hand);
   color: var(--soft);
 }
+:root[data-font] .pencil-notes { line-height: 1.32; }
 .pencil-notes li { animation: pencil 0.7s linear backwards; }
 @keyframes pencil {
   from { clip-path: inset(0 100% 0 0); }
@@ -854,7 +933,8 @@ h1, h2, p { margin: 0; }
   .tray-note { grid-column: 1 / -1; }
   .mould { grid-area: auto; }
   .mould-e, .mould-f { display: none; }
-  .corner-label { font-size: 1.15rem; }
+  .corner-label { font-size: calc(1.15rem * var(--hand-scale)); }
+  .home-tools { display: flex; flex-wrap: wrap; align-items: center; gap: 0.55rem; }
   .ribbon { right: 12px; width: 22px; height: 46px; }
   .home { padding: 1rem 0.9rem 1.5rem 1.6rem; }
   .home-head { grid-template-columns: auto 1fr; padding-right: 1.6rem; }
@@ -898,7 +978,8 @@ h1, h2, p { margin: 0; }
   .book-top { grid-area: top; padding: 0.3rem 0.9rem; flex-wrap: wrap; }
   .sayer { grid-area: sayer; display: flex; gap: 0.6rem; align-items: center; padding: 0.3rem 0.9rem; }
   .berry-host { flex: 0 0 62px; }
-  .pencil-notes { flex: 1; margin: 0; font-size: 1.2rem; }
+  .pencil-notes { flex: 1; margin: 0; padding-right: 3.4rem; font-size: calc(1.2rem * var(--hand-scale)); }
+  .sayer > .font-picker { top: 0.3rem; left: auto; right: 0.9rem; }
   .pencil-notes li:not(:last-child) { display: none; }
   .stage { grid-area: stage; padding: 0.5rem 0.9rem 0.9rem; }
   .actions { grid-area: tabs; padding: 0 0.9rem 0.9rem; }
