@@ -6,18 +6,24 @@ const SWING_MS = 950;
 
 let current = null;
 
+function setCovered(root, covered) {
+  root.inert = covered;
+  document.documentElement.classList.toggle('is-covered', covered);
+}
+
 function removeCover() {
   if (!current) return;
   clearTimeout(current.timer);
   current.wrap.remove();
-  current.root.inert = false;
+  setCovered(current.root, false);
   current = null;
 }
 
 export function openCover() {
   if (!current || current.opening) return;
   current.opening = true;
-  current.root.inert = false;
+  setCovered(current.root, false);
+  current.cover.classList.remove('is-closing');
   current.cover.classList.add('is-open');
   current.onOpen?.();
   const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -31,7 +37,8 @@ export function dismissCover() {
 
 // With swingShut, the cover starts open and closes while she watches.
 export function showCover({ root, onOpen, swingShut = false }) {
-  if (current) return;
+  if (current && !current.opening) return;
+  removeCover();
   const open = h('button', { class: 'cover-open', type: 'button' }, 'Open the book');
   const cover = h('div', { class: `cover${swingShut ? ' is-ajar' : ''}`, onClick: openCover },
     h('div', { class: 'cover-plate' },
@@ -43,10 +50,11 @@ export function showCover({ root, onOpen, swingShut = false }) {
   );
   const wrap = h('div', { class: 'cover-wrap' }, cover);
   document.body.append(wrap);
-  root.inert = true;
+  setCovered(root, true);
   current = { wrap, cover, root, onOpen, opening: false, timer: null };
   if (swingShut) {
     cover.getBoundingClientRect();
+    cover.classList.add('is-closing');
     cover.classList.remove('is-ajar');
   }
   open.focus({ preventScroll: true });

@@ -52,8 +52,8 @@
   --pale: #3d3170;
   --lilac: #4f3f96;
   --pink: #7a3f6e;
-  --butter: #6f5a2a;
-  --mint: #27605a;
+  --butter: #574620;
+  --mint: #215049;
   --sky: #2f5384;
   --ribbon: #c970a0;
   --rose: #f08fb4;
@@ -78,8 +78,10 @@ body {
   color: var(--ink);
   font-family: var(--body);
   line-height: 1.45;
-  transition: background-color 0.45s, color 0.45s;
 }
+
+/* Only while the theme changes, so moving between screens doesn't fade the background. */
+.theme-changing body { transition: background-color 0.45s, color 0.45s; }
 
 body[data-view='home'] {
   background-image:
@@ -341,9 +343,11 @@ h1, h2, p { margin: 0; }
   z-index: 50;
   inset: 0;
   overflow: hidden;
-  perspective: 2000px;
+  /* Relative to the window, so the swing looks the same on any screen width. */
+  perspective: 160vw;
   pointer-events: none;
 }
+.is-covered { overflow: hidden; }
 .cover {
   position: absolute;
   inset: 0;
@@ -369,8 +373,9 @@ h1, h2, p { margin: 0; }
   opacity: 0;
   pointer-events: none;
 }
-/* Starting any closer to edge-on stalls the browser's first frame, and the swing never begins. */
-.cover.is-ajar { transform: rotateY(-65deg); }
+/* Closing starts edge-on and fades in straight away, so the cover never pops into view. */
+.cover.is-ajar { transform: rotateY(-92deg); opacity: 0; }
+.cover.is-closing { transition: transform 0.9s cubic-bezier(0.5, 0.1, 0.3, 1), opacity 0.12s linear; }
 .cover-plate {
   position: relative;
   display: grid;
@@ -514,7 +519,7 @@ h1, h2, p { margin: 0; }
   font: 700 1.35rem/1.14 var(--hand);
   color: var(--soft);
 }
-.pencil-notes li { animation: pencil 0.7s linear both; }
+.pencil-notes li { animation: pencil 0.7s linear backwards; }
 @keyframes pencil {
   from { clip-path: inset(0 100% 0 0); }
   to { clip-path: inset(0 -1% 0 0); }

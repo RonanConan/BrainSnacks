@@ -6,7 +6,7 @@ import { berrySvg } from './mascot.js';
 import { art } from './art.js';
 import { openGame } from './shell.js';
 import { games } from './games/index.js';
-import { themeToggle } from './core/theme.js';
+import { themeToggle, followSystemTheme } from './core/theme.js';
 import { showCover, dismissCover } from './cover.js';
 
 const root = document.getElementById('app');
@@ -19,6 +19,11 @@ function settleTray() {
   home.classList.remove('settle');
   home.getBoundingClientRect();
   home.classList.add('settle');
+}
+
+function openedFromLoad() {
+  settleTray();
+  root.querySelector('.sweet')?.focus({ preventScroll: true });
 }
 
 function greetingRow(onDone) {
@@ -83,7 +88,17 @@ function renderHome() {
           h('button', {
             class: 'link-button',
             type: 'button',
-            onClick: () => showCover({ root, onOpen: settleTray, swingShut: true }),
+            onClick: (event) => {
+              const link = event.currentTarget;
+              showCover({
+                root,
+                swingShut: true,
+                onOpen: () => {
+                  settleTray();
+                  link.focus({ preventScroll: true });
+                },
+              });
+            },
           }, 'Close the book'),
           themeToggle(),
           h('button', {
@@ -114,10 +129,11 @@ function route() {
   } else {
     renderHome();
     // The book starts shut whenever the site is opened at its home page.
-    if (firstRoute) showCover({ root, onOpen: settleTray });
+    if (firstRoute) showCover({ root, onOpen: openedFromLoad });
   }
   firstRoute = false;
 }
 
 window.addEventListener('hashchange', route);
+followSystemTheme();
 route();

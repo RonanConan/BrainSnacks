@@ -170,7 +170,6 @@ function mount(el, ctx, saved) {
     rowClueEls.forEach((node, r) => node.classList.toggle('ng-clue-done', lineMatches(lineCells(size, true, r), rowClues[r])));
     colClueEls.forEach((node, c) => node.classList.toggle('ng-clue-done', lineMatches(lineCells(size, false, c), colClues[c])));
     crossBtn.setAttribute('aria-pressed', String(state.crossMode));
-    crossBtn.classList.toggle('btn-on', state.crossMode);
   }
 
   function toggleCross() {

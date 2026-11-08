@@ -194,7 +194,7 @@ function mount(el, ctx, saved) {
   }
 
   const noteBtn = h('button', { class: 'tab tab-tool', type: 'button', onClick: toggleNotes }, 'Pencil notes (P)');
-  const pad = h('div', { class: `pad pad-${size}`, role: 'group', 'aria-label': 'Number pad' },
+  const pad = h('div', { class: 'pad', role: 'group', 'aria-label': 'Number pad' },
     Array.from({ length: size }, (_, i) =>
       h('button', { class: 'pad-key', type: 'button', onClick: () => enter(i + 1) }, String(i + 1)),
     ),
@@ -242,7 +242,6 @@ function mount(el, ctx, saved) {
       cell.setAttribute('aria-label', `Row ${r}, column ${c}, ${value || 'empty'}`);
     });
     noteBtn.setAttribute('aria-pressed', String(state.noteMode));
-    noteBtn.classList.toggle('btn-on', state.noteMode);
   }
 
   function select(index, focus = true) {
