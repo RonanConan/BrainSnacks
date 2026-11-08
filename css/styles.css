@@ -418,11 +418,7 @@ h1, h2, p { margin: 0; }
 .book {
   position: relative;
   display: grid;
-  grid-template-columns: 56.5% minmax(0, 1fr) 11rem;
-  grid-template-rows: auto 1fr;
-  grid-template-areas:
-    'head top top'
-    'stage sayer tabs';
+  grid-template-columns: 56.5% minmax(0, 1fr);
   min-height: calc(100vh - 2.4rem);
   overflow: hidden;
   border-radius: 14px 22px 22px 14px;
@@ -446,8 +442,16 @@ h1, h2, p { margin: 0; }
   pointer-events: none;
 }
 
+/* Each page lays out on its own, so a tall list of topics can't push the puzzle down. */
+.page-left, .page-right { display: flex; flex-direction: column; min-width: 0; }
+.page-margin {
+  flex: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 11rem;
+  align-items: start;
+}
+
 .book-head {
-  grid-area: head;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -471,12 +475,11 @@ h1, h2, p { margin: 0; }
 .back:hover { background: var(--lilac); }
 
 .book-top {
-  grid-area: top;
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
   gap: 0.75rem;
-  padding: 1.2rem 5rem 0.5rem 2rem;
+  padding: 1.2rem 4.4rem 0.5rem 2rem;
 }
 
 .levels { display: flex; flex-wrap: wrap; gap: 0.35rem; }
@@ -488,7 +491,7 @@ h1, h2, p { margin: 0; }
   background: transparent;
   color: var(--ink);
   font: 700 0.82rem/1.2 var(--body);
-  padding: 0.3rem 0.75rem;
+  padding: 0.3rem 0.62rem;
   cursor: pointer;
   transition: background-color 0.15s;
 }
@@ -496,7 +499,7 @@ h1, h2, p { margin: 0; }
 .level[aria-pressed='true'] { background: var(--ink); color: var(--page); }
 
 .stage {
-  grid-area: stage;
+  flex: 1;
   display: flex;
   min-width: 0;
   padding: 0.6rem 2.2rem 1.6rem 1.8rem;
@@ -504,7 +507,6 @@ h1, h2, p { margin: 0; }
 .game-holder { flex: 1; min-width: 0; }
 
 .sayer {
-  grid-area: sayer;
   position: relative;
   min-width: 0;
   padding: 0.3rem 0.8rem 1rem 2rem;
@@ -589,7 +591,6 @@ h1, h2, p { margin: 0; }
 
 /* Index tabs on the edge of the page */
 .actions {
-  grid-area: tabs;
   display: grid;
   align-content: start;
   gap: 0.55rem;
@@ -765,14 +766,15 @@ h1, h2, p { margin: 0; }
     min-height: 0;
   }
   .book::before { display: none; }
-  .book-head { padding: 0.8rem 2.4rem 0.3rem 0.9rem; }
-  .book-top { padding: 0.3rem 0.9rem; flex-wrap: wrap; }
-  .sayer { display: flex; gap: 0.6rem; align-items: center; padding: 0.3rem 0.9rem; }
+  .page-left, .page-right, .page-margin { display: contents; }
+  .book-head { grid-area: head; padding: 0.8rem 2.4rem 0.3rem 0.9rem; }
+  .book-top { grid-area: top; padding: 0.3rem 0.9rem; flex-wrap: wrap; }
+  .sayer { grid-area: sayer; display: flex; gap: 0.6rem; align-items: center; padding: 0.3rem 0.9rem; }
   .berry-host { flex: 0 0 62px; }
   .pencil-notes { flex: 1; margin: 0; font-size: 1.2rem; }
   .pencil-notes li:not(:last-child) { display: none; }
-  .stage { padding: 0.5rem 0.9rem 0.9rem; }
-  .actions { padding: 0 0.9rem 0.9rem; }
+  .stage { grid-area: stage; padding: 0.5rem 0.9rem 0.9rem; }
+  .actions { grid-area: tabs; padding: 0 0.9rem 0.9rem; }
   .action-buttons { grid-template-columns: repeat(3, 1fr); }
   .tab { min-height: 3rem; padding: 0.4rem 0.6rem; border-radius: 13px; text-align: center; transform: none; }
   .tab:hover:not(:disabled), .tab:focus-visible { transform: none; }
