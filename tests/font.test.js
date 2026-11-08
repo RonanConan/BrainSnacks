@@ -33,10 +33,21 @@ test('titles keep the display font', () => {
   }
 });
 
-test('puzzle text follows the font picker', () => {
-  for (const selector of ['.maths-prompt', '.gap-number', '.maths-target', '.rd-question', '.rd-solution']) {
-    assert.ok(ruleFor(gameStyles, selector).includes('var(--puzzle)'), selector);
+test('nothing inside a game uses the bubbly title font', () => {
+  assert.ok(!gameStyles.includes('var(--display)'));
+});
+
+test('question text sits at a fixed line height, so a font change cannot move it', () => {
+  for (const selector of ['.quiz-question', '.rd-question']) {
+    const rule = ruleFor(gameStyles, selector);
+    assert.ok(rule.includes('var(--body)'), selector);
+    assert.match(rule, /\/2\.08rem/, selector);
+    assert.match(rule, /min-height/, selector);
   }
-  assert.ok(ruleFor(gameStyles, '.tile').includes('var(--puzzle)'));
-  assert.ok(ruleFor(gameStyles, '.sc-slot, .sc-tile').includes('var(--puzzle)'));
+});
+
+test('controls keep one font whichever option is picked', () => {
+  for (const selector of ['.level', '.tab', '.btn']) {
+    assert.ok(ruleFor(styles, selector).includes('var(--ui)'), selector);
+  }
 });

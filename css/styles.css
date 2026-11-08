@@ -31,14 +31,14 @@
   --gaegu: 'Gaegu', 'Comic Sans MS', cursive;
   --atkinson: 'Atkinson Hyperlegible', Verdana, sans-serif;
   --lexend: 'Lexend', Verdana, sans-serif;
-  /* Titles always use --display. The rest changes with the font picker. */
+  /* Titles keep --display and controls keep --ui, so changing font never moves the layout. */
   --display: 'Bagel Fat One', 'Trebuchet MS', sans-serif;
   --body: var(--atkinson);
+  --ui: var(--atkinson);
   --hand: var(--gaegu);
   --hand-weight: 700;
   --hand-scale: 1;
-  --puzzle: var(--display);
-  --puzzle-weight: 400;
+  --read-scale: 1;
   --spine: 36px;
   --corner: 118px;
 }
@@ -47,12 +47,11 @@
   --hand: var(--body);
   --hand-weight: 400;
   --hand-scale: 0.8;
-  --puzzle: var(--body);
-  --puzzle-weight: 700;
 }
 :root[data-font='roomy'] {
   --body: var(--lexend);
   --hand-scale: 0.74;
+  --read-scale: 0.9;
 }
 
 :root[data-theme='dark'] {
@@ -128,7 +127,7 @@ h1, h2, p { margin: 0; }
   border-radius: 14px;
   background: var(--paper);
   color: var(--ink);
-  font: 700 0.95rem/1.2 var(--body);
+  font: 700 0.95rem/1.2 var(--ui);
   padding: 0.65rem 1rem;
   cursor: pointer;
   transition: background-color 0.15s, transform 0.12s;
@@ -294,12 +293,11 @@ h1, h2, p { margin: 0; }
 
 .home-sub {
   margin-top: 0.15rem;
-  font: var(--hand-weight) calc(1.45rem * var(--hand-scale))/1.1 var(--hand);
+  font: var(--hand-weight) calc(1.45rem * var(--hand-scale))/1.6rem var(--hand);
   color: var(--soft);
   transform: rotate(-1.5deg);
   transform-origin: left;
 }
-:root[data-font] .home-sub { transform: none; }
 
 .home-right { display: flex; align-items: center; gap: 0.9rem; }
 .home-tools { display: grid; justify-items: center; gap: 0.1rem; }
@@ -312,7 +310,7 @@ h1, h2, p { margin: 0; }
   border: 0;
   background: transparent;
   color: var(--ink);
-  font: 700 0.9rem/1 var(--body);
+  font: 700 0.9rem/1 var(--ui);
   text-decoration: underline;
   text-underline-offset: 4px;
   cursor: pointer;
@@ -388,13 +386,13 @@ h1, h2, p { margin: 0; }
 }
 
 .sweet-name { display: block; font: 400 1.5rem/1.05 var(--display); }
-.sweet-blurb { display: block; max-width: 17ch; margin-top: 0.25rem; font-size: 0.9rem; line-height: 1.28; }
+.sweet-blurb { display: block; max-width: 17ch; margin-top: 0.25rem; font-size: calc(0.9rem * var(--read-scale)); line-height: 1.15rem; }
 .sweet-art { position: absolute; right: 16px; bottom: 16px; display: block; }
 .sweet-art svg { display: block; width: 100%; height: auto; }
 
 .sweet-sudoku { grid-area: sudoku; background: var(--butter); border-radius: 26px 26px 26px 70px; }
 .sweet-sudoku .sweet-name { font-size: 2.3rem; }
-.sweet-sudoku .sweet-blurb { font-size: 1rem; }
+.sweet-sudoku .sweet-blurb { font-size: calc(1rem * var(--read-scale)); line-height: 1.28rem; }
 .sweet-sudoku .sweet-art { width: 52%; right: 24px; bottom: 24px; }
 .sweet-crossword { grid-area: crossword; background: var(--sky); border-radius: 26px; }
 .sweet-crossword .sweet-art { width: 42%; }
@@ -402,7 +400,7 @@ h1, h2, p { margin: 0; }
 .sweet-maths .sweet-art { width: 42%; }
 .sweet-quiz { grid-area: quiz; background: var(--pink); border-radius: 26px 90px 26px 26px; }
 .sweet-quiz .sweet-name { font-size: 2.3rem; }
-.sweet-quiz .sweet-blurb { font-size: 1rem; }
+.sweet-quiz .sweet-blurb { font-size: calc(1rem * var(--read-scale)); line-height: 1.28rem; }
 .sweet-quiz .sweet-art { width: 46%; right: 34px; bottom: 24px; }
 .sweet-scramble { grid-area: scramble; background: var(--lilac); border-radius: 60px 26px 26px 26px; }
 .sweet-scramble .sweet-art { width: 66%; }
@@ -600,7 +598,7 @@ h1, h2, p { margin: 0; }
   border-radius: 15px;
   background: var(--ink);
   color: var(--page);
-  font: 700 1.05rem/1 var(--body);
+  font: 700 1.05rem/1 var(--ui);
   cursor: pointer;
   transition: transform 0.15s;
 }
@@ -666,6 +664,7 @@ h1, h2, p { margin: 0; }
   border-radius: 999px;
   background: var(--pale);
   color: var(--ink);
+  font-family: var(--ui);
   font-weight: 700;
   text-decoration: none;
   transition: background-color 0.15s;
@@ -676,20 +675,23 @@ h1, h2, p { margin: 0; }
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: 0.75rem;
-  padding: 1.2rem 4.4rem 0.5rem 2rem;
+  gap: 0.5rem;
+  /* Room for two rows of levels, so Berry and the tabs sit at the same height in every game. */
+  min-height: calc(1.7rem + 96px + 0.25rem);
+  padding: 1.2rem 3.5rem 0.5rem 2rem;
 }
+.page-tools { flex: none; display: flex; align-items: center; gap: 0.5rem; margin-left: auto; }
 
-.levels { display: flex; flex-wrap: wrap; gap: 0.35rem; }
+.levels { flex: 1; min-width: 0; display: flex; flex-wrap: wrap; gap: 0.25rem; }
 .level {
   appearance: none;
-  min-height: 44px;
+  min-height: 48px;
   border: 2.5px solid var(--ink);
   border-radius: 999px;
   background: transparent;
   color: var(--ink);
-  font: 700 0.82rem/1.2 var(--body);
-  padding: 0.3rem 0.62rem;
+  font: 700 0.82rem/1.2 var(--ui);
+  padding: 0.3rem 0.5rem;
   cursor: pointer;
   transition: background-color 0.15s;
 }
@@ -709,7 +711,6 @@ h1, h2, p { margin: 0; }
   min-width: 0;
   padding: 0.3rem 0.8rem 1rem 2rem;
 }
-.sayer > .font-picker { position: absolute; top: 0.6rem; left: calc(2rem + 108px + 0.6rem); }
 
 .pencil-notes {
   display: grid;
@@ -810,7 +811,7 @@ h1, h2, p { margin: 0; }
   border-radius: 16px 0 0 16px;
   background: var(--lilac);
   color: var(--ink);
-  font: 700 0.92rem/1.15 var(--body);
+  font: 700 0.92rem/1.15 var(--ui);
   text-align: left;
   cursor: pointer;
   transform: translateX(14px);
@@ -831,9 +832,7 @@ h1, h2, p { margin: 0; }
   display: flex;
   flex-direction: column;
   gap: 0.9rem;
-  justify-content: center;
   align-items: center;
-  height: 100%;
 }
 
 .sudoku {
@@ -904,13 +903,13 @@ h1, h2, p { margin: 0; }
 .pad { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.4rem; }
 .pad-key {
   appearance: none;
-  width: 3rem;
+  width: 2.7rem;
   height: 3rem;
   border: 2.5px solid var(--ink);
   border-radius: 14px;
   background: transparent;
   color: var(--ink);
-  font: 700 1.2rem/1 var(--body);
+  font: 700 1.2rem/1 var(--ui);
   cursor: pointer;
   transition: background-color 0.15s, transform 0.12s;
 }
@@ -939,6 +938,7 @@ h1, h2, p { margin: 0; }
   .home { padding: 1rem 0.9rem 1.5rem 1.6rem; }
   .home-head { grid-template-columns: auto 1fr; padding-right: 1.6rem; }
   .home-berry { width: 80px; }
+  .home-sub { font-size: calc(1.2rem * var(--hand-scale)); }
   .home-right { grid-column: 1 / -1; flex-wrap: wrap; }
   .surprise {
     flex: 1;
@@ -975,11 +975,12 @@ h1, h2, p { margin: 0; }
   .book::before { display: none; }
   .page-left, .page-right, .page-margin { display: contents; }
   .book-head { grid-area: head; padding: 0.8rem 2.4rem 0.3rem 0.9rem; }
-  .book-top { grid-area: top; padding: 0.3rem 0.9rem; flex-wrap: wrap; }
+  .book-top { grid-area: top; min-height: 0; padding: 0.3rem 0.9rem; flex-wrap: wrap; }
+  .levels { flex-basis: 100%; }
+  .page-tools { margin-left: 0; }
   .sayer { grid-area: sayer; display: flex; gap: 0.6rem; align-items: center; padding: 0.3rem 0.9rem; }
   .berry-host { flex: 0 0 62px; }
-  .pencil-notes { flex: 1; margin: 0; padding-right: 3.4rem; font-size: calc(1.2rem * var(--hand-scale)); }
-  .sayer > .font-picker { top: 0.3rem; left: auto; right: 0.9rem; }
+  .pencil-notes { flex: 1; min-height: 6.6rem; margin: 0; font-size: calc(1.2rem * var(--hand-scale)); }
   .pencil-notes li:not(:last-child) { display: none; }
   .stage { grid-area: stage; padding: 0.5rem 0.9rem 0.9rem; }
   .actions { grid-area: tabs; padding: 0 0.9rem 0.9rem; }

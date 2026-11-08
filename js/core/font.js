@@ -7,9 +7,9 @@ const EDGE_PX = 12;
 
 export const DEFAULT_FONT = 'cosy';
 export const FONTS = [
-  { id: 'cosy', name: 'Cosy', about: 'Handwritten notes and chunky puzzle text.' },
-  { id: 'clear', name: 'Clear', about: 'Plain, easy letters everywhere but the titles.' },
-  { id: 'roomy', name: 'Roomy', about: 'Wider letters with more space between them.' },
+  { id: 'cosy', name: 'Cosy', about: "Berry's notes in handwriting." },
+  { id: 'clear', name: 'Clear', about: 'Plain letters for everything but the titles.' },
+  { id: 'roomy', name: 'Roomy', about: 'Plain letters that are wider and more open.' },
 ];
 
 const page = () => document.documentElement;

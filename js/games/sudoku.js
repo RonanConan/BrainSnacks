@@ -378,8 +378,8 @@ export default {
   levelName: 'Grid size',
   levels: [
     { id: '4', label: 'Tiny 4×4' },
-    { id: '6', label: 'Gentle 6×6' },
-    { id: '9', label: 'Easy 9×9' },
+    { id: '6', label: 'Small 6×6' },
+    { id: '9', label: 'Big 9×9' },
   ],
   defaultLevel: '6',
   mount,

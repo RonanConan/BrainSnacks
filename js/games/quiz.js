@@ -134,7 +134,7 @@ export default {
   intro: 'Pick an answer by clicking it or pressing 1 to 4. Wrong guesses cost nothing.',
   levelName: 'Topic',
   levels: [
-    { id: 'all', label: 'Everything' },
+    { id: 'all', label: 'All' },
     { id: 'capitals', label: 'Capitals' },
     { id: 'science', label: 'Science' },
     { id: 'history', label: 'History' },
