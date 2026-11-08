@@ -325,7 +325,7 @@ function mount(el, ctx, saved) {
       event.preventDefault();
       backspace();
     } else if (event.key === 'Escape') {
-      input.blur();
+      ctx.focusActions();
     } else if (/^[a-zA-Z]$/.test(event.key) && !event.ctrlKey && !event.metaKey && !event.altKey) {
       event.preventDefault();
       typeLetter(event.key.toUpperCase());
@@ -354,6 +354,7 @@ function mount(el, ctx, saved) {
   };
 
   return {
+    focus: focusInput,
     serialize: () => state,
     hasProgress: () => state.letters.some(Boolean),
     hint() {
@@ -404,6 +405,7 @@ function mount(el, ctx, saved) {
     reveal() {
       finished = true;
       state.letters = [...solution];
+      state.flagged = solution.map(() => false);
       paint();
       ctx.finish({ revealed: true });
     },
@@ -414,7 +416,7 @@ export default {
   id: 'crossword',
   title: 'Mini crossword',
   blurb: 'A few words, one theme.',
-  intro: 'Click a square and type. Tab jumps to the next clue, and clicking a square twice turns the direction.',
+  intro: 'Click a square and type. Tab jumps to the next clue, clicking a square twice turns the direction, and Esc takes you to the buttons.',
   levelName: 'Size',
   levels: [
     { id: 'gentle', label: 'Gentle' },

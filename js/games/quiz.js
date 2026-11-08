@@ -67,7 +67,9 @@ function mount(el, ctx, saved) {
       node.classList.toggle('option-wrong', state.wrong.includes(option));
       node.classList.toggle('option-gone', state.removed.includes(option));
       node.classList.toggle('option-right', showAnswer && option === question.answer);
-      node.disabled = finished || isGone;
+      node.disabled = finished;
+      node.setAttribute('aria-disabled', String(isGone));
+      node.tabIndex = isGone ? -1 : 0;
     });
   }
 

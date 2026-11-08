@@ -37,7 +37,9 @@ function mount(el, ctx, saved) {
       const faceUp = state.matched[i] || state.open.includes(i) || peek.includes(i);
       card.classList.toggle('mem-up', faceUp);
       card.classList.toggle('mem-matched', state.matched[i]);
-      card.disabled = state.matched[i] || finished;
+      // Matched cards stay focusable so keyboard players keep their place on the board.
+      card.disabled = finished;
+      card.setAttribute('aria-disabled', String(state.matched[i]));
       card.setAttribute('aria-label', faceUp ? `Card ${i + 1}, ${ICONS[state.deck[i]][1]}` : `Card ${i + 1}, face down`);
     });
   }

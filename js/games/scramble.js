@@ -31,8 +31,10 @@ function mount(el, ctx, saved) {
   const entry = allWords.find((item) => item.word === state.word);
   let finished = false;
 
-  const slotRow = h('div', { class: 'sc-slots' });
-  const tileRow = h('div', { class: 'sc-tiles' });
+  const slotEls = state.slots.map((_, i) => h('button', { type: 'button', onClick: () => takeBack(i) }));
+  const tileEls = state.tiles.map((tile) => h('button', { type: 'button', onClick: () => place(tile) }, tile.letter));
+  const slotRow = h('div', { class: 'sc-slots' }, slotEls);
+  const tileRow = h('div', { class: 'sc-tiles' }, tileEls);
   const allowedAnswers = new Set(allWords.map((item) => item.word));
   const sorted = (text) => [...text].sort().join('');
 
@@ -49,24 +51,26 @@ function mount(el, ctx, saved) {
   const isUsed = (id) => state.slots.includes(id);
   const currentWord = () => state.slots.map((id) => (id === null ? '' : tileById(id).letter)).join('');
 
+  // Buttons are updated in place, never rebuilt or disabled, so keyboard focus stays put.
+  function setInactive(button, inactive) {
+    button.setAttribute('aria-disabled', String(inactive));
+    button.tabIndex = inactive ? -1 : 0;
+  }
+
   function paint() {
-    slotRow.replaceChildren(...state.slots.map((id, i) =>
-      h('button', {
-        class: `sc-slot${state.locked[i] ? ' sc-slot-locked' : ''}${id === null ? '' : ' sc-slot-full'}`,
-        type: 'button',
-        disabled: state.locked[i] || id === null || finished,
-        'aria-label': id === null ? `Space ${i + 1}, empty` : `Space ${i + 1}, ${tileById(id).letter}`,
-        onClick: () => takeBack(i),
-      }, id === null ? '' : tileById(id).letter),
-    ));
-    tileRow.replaceChildren(...state.tiles.map((tile) =>
-      h('button', {
-        class: `sc-tile${isUsed(tile.id) ? ' sc-tile-used' : ''}`,
-        type: 'button',
-        disabled: isUsed(tile.id) || finished,
-        onClick: () => place(tile),
-      }, tile.letter),
-    ));
+    slotEls.forEach((slot, i) => {
+      const id = state.slots[i];
+      const letter = id === null ? '' : tileById(id).letter;
+      slot.className = `sc-slot${state.locked[i] ? ' sc-slot-locked' : ''}${id === null ? '' : ' sc-slot-full'}`;
+      slot.textContent = letter;
+      slot.setAttribute('aria-label', id === null ? `Space ${i + 1}, empty` : `Space ${i + 1}, ${letter}`);
+      setInactive(slot, state.locked[i] || id === null || finished);
+    });
+    tileEls.forEach((button, i) => {
+      const used = isUsed(state.tiles[i].id);
+      button.className = `sc-tile${used ? ' sc-tile-used' : ''}`;
+      setInactive(button, used || finished);
+    });
   }
 
   function checkAnswer() {
@@ -92,7 +96,7 @@ function mount(el, ctx, saved) {
   }
 
   function takeBack(slot) {
-    if (finished || state.locked[slot]) return;
+    if (finished || state.locked[slot] || state.slots[slot] === null) return;
     state.slots[slot] = null;
     paint();
     ctx.save();

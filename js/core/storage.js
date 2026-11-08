@@ -13,8 +13,8 @@ function browserStore() {
 
 export function load(key, fallback = null) {
   try {
-    const store = browserStore();
-    const raw = store ? store.getItem(key) : memory.get(key);
+    // A value is only in memory when writing it to the browser failed, so it is the newest.
+    const raw = memory.has(key) ? memory.get(key) : browserStore()?.getItem(key);
     return raw == null ? fallback : JSON.parse(raw);
   } catch {
     return fallback;
@@ -27,6 +27,7 @@ export function save(key, value) {
     const store = browserStore();
     if (store) {
       store.setItem(key, raw);
+      memory.delete(key);
       return;
     }
   } catch {

@@ -309,11 +309,11 @@ function mount(el, ctx, saved) {
       const sameRow = Math.floor(next / size) === Math.floor(state.selected / size);
       const horizontal = key === 'ArrowLeft' || key === 'ArrowRight';
       if (next >= 0 && next < count && (!horizontal || sameRow)) select(next);
-    } else if (/^[1-9]$/.test(key) && Number(key) <= size) {
+    } else if (/^[1-9]$/.test(key) && Number(key) <= size && !event.repeat) {
       enter(Number(key));
     } else if (key === 'Backspace' || key === 'Delete' || key === '0') {
       erase();
-    } else if (key.toLowerCase() === 'p' && !event.ctrlKey && !event.metaKey) {
+    } else if (key.toLowerCase() === 'p' && !event.repeat && !event.ctrlKey && !event.metaKey) {
       toggleNotes();
     }
   }
@@ -322,6 +322,7 @@ function mount(el, ctx, saved) {
   cellEls[state.selected]?.focus();
 
   return {
+    focus: () => cellEls[state.selected].focus(),
     serialize: () => state,
     hasProgress: () => state.cells.some((value, i) => value !== state.puzzle[i]) || state.notes.some(Boolean),
     hint() {

@@ -79,6 +79,7 @@ function clean(text) {
     .toLowerCase()
     .replace(/[£'’]/g, '')
     .replace(/[^a-z0-9.\s-]/g, ' ')
+    .replace(/\.(?!\d)/g, ' ')
     .replace(/\b(a|an|the|your|my)\b/g, ' ')
     .replace(/\s+/g, ' ')
     .trim();

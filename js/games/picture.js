@@ -177,6 +177,7 @@ function mount(el, ctx, saved) {
     state.crossMode = !state.crossMode;
     paint();
     ctx.save();
+    cellEls[state.selected].focus({ preventScroll: true });
   }
 
   function checkSolved() {
@@ -251,9 +252,10 @@ function mount(el, ctx, saved) {
       }
     } else if (event.key === ' ' || event.key === 'Enter') {
       event.preventDefault();
+      if (event.repeat) return;
       const wanted = state.crossMode ? 2 : 1;
       setMark(state.selected, state.marks[state.selected] === wanted ? 0 : wanted);
-    } else if (event.key.toLowerCase() === 'x' && !event.ctrlKey && !event.metaKey) {
+    } else if (event.key.toLowerCase() === 'x' && !event.repeat && !event.ctrlKey && !event.metaKey) {
       setMark(state.selected, state.marks[state.selected] === 2 ? 0 : 2);
     }
   });
@@ -262,6 +264,7 @@ function mount(el, ctx, saved) {
   cellEls[state.selected].focus({ preventScroll: true });
 
   return {
+    focus: () => cellEls[state.selected].focus({ preventScroll: true }),
     serialize: () => state,
     hasProgress: () => state.marks.some(Boolean),
     hint() {
@@ -272,6 +275,7 @@ function mount(el, ctx, saved) {
         state.selected = wrong;
         paint();
         ctx.say("I cleared a square that didn't belong.", 'think');
+        checkSolved();
         return;
       }
       const known = state.marks.map((mark) => (mark === 1 ? FILLED : mark === 2 ? EMPTY : UNKNOWN));

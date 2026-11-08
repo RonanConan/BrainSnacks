@@ -60,6 +60,7 @@ function mount(el, ctx, saved) {
   input.focus();
 
   return {
+    focus: () => input.focus(),
     serialize: () => state,
     hasProgress: () => false,
     hint() {

@@ -28,11 +28,14 @@ export function openGame(game, root) {
   let level = levelIds.includes(saved?.level)
     ? saved.level
     : game.defaultLevel ?? levelIds[0] ?? null;
+  // Progress saved for a level that no longer exists can't be used for another one.
+  const resumable = levelIds.length === 0 || levelIds.includes(saved?.level) ? saved?.state : undefined;
 
   let instance = null;
   let done = false;
   let actionsOn = true;
   let asking = false;
+  let returnFocus = null;
 
   const stage = h('section', { class: 'stage', 'aria-label': game.title });
   const bubble = h('p', { class: 'bubble', 'aria-live': 'polite' });
@@ -99,6 +102,9 @@ export function openGame(game, root) {
       actionsOn = on;
       syncButtons();
     },
+    focusActions() {
+      (hintBtn.disabled ? newBtn : hintBtn).focus();
+    },
     finish({ revealed = false, message } = {}) {
       if (done) return;
       done = true;
@@ -114,6 +120,7 @@ export function openGame(game, root) {
 
   function start(savedState) {
     instance?.destroy?.();
+    instance = null;
     done = false;
     actionsOn = true;
     closeAsk();
@@ -122,12 +129,22 @@ export function openGame(game, root) {
     say(game.intro, 'idle');
     const holder = h('div', { class: 'game-holder' });
     stage.append(holder);
-    instance = game.mount(holder, context(), savedState);
+    try {
+      instance = game.mount(holder, context(), savedState);
+    } catch (error) {
+      if (savedState == null) throw error;
+      // Progress saved against older puzzle data can't be restored, so start a fresh puzzle.
+      console.warn(`Could not resume ${game.id}, starting a new puzzle.`, error);
+      remove(key);
+      start();
+      return;
+    }
     syncButtons();
     persist();
   }
 
   function ask(question, yesLabel, onYes) {
+    returnFocus = document.activeElement;
     asking = true;
     buttons.hidden = true;
     confirmBox.hidden = false;
@@ -139,7 +156,7 @@ export function openGame(game, root) {
     confirmBox.replaceChildren(
       h('p', null, question),
       yes,
-      h('button', { class: 'btn', type: 'button', onClick: closeAsk }, 'Keep going'),
+      h('button', { class: 'btn', type: 'button', onClick: cancelAsk }, 'Keep going'),
     );
     yes.focus();
   }
@@ -151,10 +168,23 @@ export function openGame(game, root) {
     confirmBox.replaceChildren();
   }
 
+  function cancelAsk() {
+    const previous = returnFocus;
+    closeAsk();
+    if (previous?.isConnected && stage.contains(previous)) {
+      previous.focus();
+      return;
+    }
+    instance.focus?.();
+    if (document.activeElement === document.body && previous?.isConnected) previous.focus();
+  }
+
   function doHint() {
     if (done || !actionsOn || asking) return;
     instance.hint();
     persist();
+    // Clicking the button takes focus away, so hand it back and let her keep playing.
+    if (!done && !stage.contains(document.activeElement)) instance.focus?.();
   }
 
   function askAnswer() {
@@ -191,10 +221,10 @@ export function openGame(game, root) {
 
   function onKey(event) {
     if (event.key === 'Escape' && asking) {
-      closeAsk();
+      cancelAsk();
       return;
     }
-    if (game.typing || event.ctrlKey || event.metaKey || event.altKey) return;
+    if (game.typing || event.repeat || event.ctrlKey || event.metaKey || event.altKey) return;
     const tag = event.target.tagName;
     if ((tag === 'INPUT' || tag === 'TEXTAREA') && !event.target.dataset.shortcuts) return;
     const letter = event.key.toLowerCase();
@@ -209,7 +239,7 @@ export function openGame(game, root) {
   }
 
   document.addEventListener('keydown', onKey);
-  start(saved?.state);
+  start(resumable);
 
   return function close() {
     document.removeEventListener('keydown', onKey);

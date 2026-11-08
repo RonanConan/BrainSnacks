@@ -17,8 +17,8 @@
   text-align: left;
   cursor: pointer;
 }
-.option:hover:not(:disabled) { background: var(--butter); }
-.option:disabled { cursor: default; }
+.option:hover:not(:disabled):not([aria-disabled='true']) { background: var(--butter); }
+.option:disabled, .option[aria-disabled='true'] { cursor: default; }
 .option-key {
   flex: none;
   display: grid;
@@ -168,11 +168,12 @@
   padding: 0;
 }
 .sc-slot { border: 3px dashed #a9abd8; background: #f4f5fc; cursor: pointer; }
-.sc-slot:disabled { cursor: default; }
+.sc-slot[aria-disabled='true'] { cursor: default; }
 .sc-slot-full { border: 3px solid var(--blueberry); background: #fff; }
 .sc-slot-locked { border: 3px solid var(--blueberry); background: var(--mint); }
 .sc-tile { border: 3px solid var(--blueberry); background: var(--butter); cursor: pointer; }
-.sc-tile:hover:not(:disabled) { background: var(--strawberry); }
+.sc-tile:hover:not([aria-disabled='true']) { background: var(--strawberry); }
+.sc-tile[aria-disabled='true'] { cursor: default; }
 .sc-tile:nth-child(odd) { transform: rotate(-3deg); }
 .sc-tile:nth-child(3n) { transform: rotate(4deg); }
 .sc-tile-used { opacity: 0.18; }
@@ -211,7 +212,7 @@
   cursor: pointer;
   perspective: 700px;
 }
-.mem-card:disabled { cursor: default; }
+.mem-card:disabled, .mem-card[aria-disabled='true'] { cursor: default; }
 .mem-inner {
   position: relative;
   display: block;

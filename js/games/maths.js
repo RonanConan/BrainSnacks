@@ -42,7 +42,7 @@ export function makeArithmetic(level, rng = Math.random) {
   if (kind === 'subtract') {
     const b = randInt(11, 39, rng);
     const a = b + randInt(12, 55, rng);
-    const up = Math.ceil(b / 10) * 10;
+    const up = (Math.floor(b / 10) + 1) * 10;
     return typed(`${a} − ${b}`, a - b,
       ['Try counting up from the smaller number instead.', `Going from ${b} up to ${up} takes ${up - b}. How far is it from there to ${a}?`],
       `${a} − ${b} = ${a - b}`);
@@ -71,7 +71,7 @@ export function makeArithmetic(level, rng = Math.random) {
   }
   if (kind === 'half') {
     const n = randInt(26, 99, rng) * 2;
-    const tens = Math.floor(n / 100) * 100 + Math.floor((n % 100) / 10) * 10;
+    const tens = n % 10 ? n - (n % 10) : n - 10;
     return typed(`Half of ${n}`, n / 2,
       ['Halve it in two parts.', `Half of ${tens} is ${tens / 2}. Now halve ${n - tens}.`],
       `Half of ${n} = ${n / 2}`);
@@ -403,13 +403,18 @@ function mount(el, ctx, saved) {
     const line = h('p', { class: 'maths-line' });
 
     function paint() {
-      tileRow.replaceChildren(...state.tiles.filter((tile) => !tile.used).map((tile) =>
+      const focused = tileRow.contains(document.activeElement) ? document.activeElement.dataset.id : null;
+      const buttons = state.tiles.filter((tile) => !tile.used).map((tile) =>
         h('button', {
           class: `tile${first && first.id === tile.id ? ' tile-on' : ''}`,
           type: 'button',
+          'data-id': tile.id,
           onClick: () => chooseTile(tile),
         }, String(tile.value)),
-      ));
+      );
+      tileRow.replaceChildren(...buttons);
+      // Keep keyboard players on the same tile, or on the new one if theirs was used up.
+      if (focused !== null) (buttons.find((button) => button.dataset.id === focused) || buttons[buttons.length - 1])?.focus();
       opRow.querySelectorAll('.tile-op').forEach((button) => {
         button.setAttribute('aria-pressed', String(button.textContent === op));
       });
@@ -499,6 +504,7 @@ function mount(el, ctx, saved) {
     serialize: () => state,
     hasProgress: () => state.index > 0 || state.answered || state.history.length > 0,
     destroy: clearKeys,
+    focus: () => body.querySelector('.maths-input')?.focus(),
     hint() {
       if (state.answered) return;
       const question = current();
